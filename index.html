@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quiz Application</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="welcome-content">
+                <h1>Quiz Master</h1>
+                <p>Test your knowledge across multiple categories and difficulty levels</p>
+                <button class="btn btn-primary" onclick="showSetupScreen()">Start Quiz</button>
+            </div>
+        </div>
+
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="screen">
+            <div class="setup-content">
+                <h2>Select Quiz Settings</h2>
+                
+                <div class="setup-section">
+                    <label>Choose a Category:</label>
+                    <div class="options-grid">
+                        <button class="option-btn" data-category="General Knowledge" onclick="selectCategory(this)">
+                            <span class="icon">📚</span>
+                            <span>General Knowledge</span>
+                        </button>
+                        <button class="option-btn" data-category="Science" onclick="selectCategory(this)">
+                            <span class="icon">🔬</span>
+                            <span>Science</span>
+                        </button>
+                        <button class="option-btn" data-category="History" onclick="selectCategory(this)">
+                            <span class="icon">🏛️</span>
+                            <span>History</span>
+                        </button>
+                        <button class="option-btn" data-category="Technology" onclick="selectCategory(this)">
+                            <span class="icon">💻</span>
+                            <span>Technology</span>
+                        </button>
+                        <button class="option-btn" data-category="Geography" onclick="selectCategory(this)">
+                            <span class="icon">🌍</span>
+                            <span>Geography</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <label>Choose Difficulty:</label>
+                    <div class="difficulty-grid">
+                        <button class="difficulty-btn easy" data-difficulty="Easy" onclick="selectDifficulty(this)">
+                            Easy
+                        </button>
+                        <button class="difficulty-btn medium" data-difficulty="Medium" onclick="selectDifficulty(this)">
+                            Medium
+                        </button>
+                        <button class="difficulty-btn hard" data-difficulty="Hard" onclick="selectDifficulty(this)">
+                            Hard
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setup-actions">
+                    <button class="btn btn-secondary" onclick="showWelcomeScreen()">Back</button>
+                    <button class="btn btn-primary" onclick="startQuiz()" id="startBtn" disabled>Start Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="screen">
+            <div class="quiz-header">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="quiz-info">
+                    <span class="question-counter">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
+                    <span class="category-badge" id="categoryBadge"></span>
+                    <span class="difficulty-badge" id="difficultyBadge"></span>
+                </div>
+            </div>
+
+            <div class="quiz-content">
+                <div class="timer-container">
+                    <div class="timer-circle">
+                        <svg class="timer-svg" viewBox="0 0 100 100">
+                            <circle class="timer-circle-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="timer-circle-progress" id="timerCircle" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div class="timer-text">
+                            <span id="timerValue">30</span>
+                            <span class="timer-label">sec</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h3 id="questionText"></h3>
+                </div>
+
+                <div class="options-container" id="optionsContainer"></div>
+
+                <div class="quiz-navigation">
+                    <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn" disabled>Previous</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" disabled>Next</button>
+                    <button class="btn btn-success" onclick="finishQuiz()" id="submitBtn" style="display: none;">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen">
+            <div class="results-content">
+                <h2>Quiz Results</h2>
+                
+                <div class="results-summary">
+                    <div class="summary-card">
+                        <div class="summary-value" id="scorePercentage">85%</div>
+                        <div class="summary-label">Overall Score</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="correctCount">17</div>
+                        <div class="summary-label">Correct Answers</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="incorrectCount">3</div>
+                        <div class="summary-label">Incorrect Answers</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="totalTime">5:42</div>
+                        <div class="summary-label">Total Time</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3>Performance Breakdown</h3>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Time Per Question</h3>
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="detailed-results">
+                    <h3>Detailed Results</h3>
+                    <div id="detailedResultsList"></div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-secondary" onclick="showWelcomeScreen()">Home</button>
+                    <button class="btn btn-primary" onclick="retakeQuiz()">Retake Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="quiz-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
